@@ -1,0 +1,42 @@
+🗓️ Weather App Improvement Plan (1 per day)
+Day 1: Improve UX
+✅ Add a loading indicator (e.g. "Loading..." while fetching data)
+
+Day 2: Keyboard Usability
+✅ Trigger search when user presses Enter key in the input field
+
+Day 3: Better Error Handling
+✅ Show custom messages like “City not found” vs “Network error”
+
+Day 4: Clear Input
+✅ Automatically clear the input field after a successful search (optional)
+
+Day 5: Input Enhancements
+✅ Disable the button while loading or when the input is empty
+
+Day 6: Style Upgrade
+🎨 Use basic CSS or CSS modules to make the layout cleaner
+
+Day 7: Responsive Design
+📱 Make it mobile-friendly using Flexbox or media queries
+
+Day 8: Weather Icons
+🌤 Show weather icons from OpenWeatherMap (weather[0].icon)
+
+Day 9: More Data
+🌡️ Display more info: wind speed, pressure, sunrise/sunset times
+
+Day 10: Local Time
+🕒 Convert city time using timezone offset from API
+
+Day 11: Save Recent Searches
+📝 Store the last 5 searched cities using localStorage
+
+Day 12: Auto Detect Location
+📍 Use browser’s Geolocation API to fetch weather for current location
+
+Day 13: Dark Mode
+🌙 Add a toggle for Dark Mode / Light Mode
+
+Day 14: Polish & Deploy
+🧽 Clean up code, remove unused code, and deploy it (e.g. on Vercel or Netlify)
