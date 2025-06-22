@@ -62,9 +62,11 @@ export default function App() {
         }
     }
 
+//bug data fetch forecast didnt clear after =citynotfound
+
     return (
-        <div className="w-screen h-screen bg-gradient-to-b from-blue-400 to-white flex flex-col items-center justify-center p-4">
-            <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md w-full max-w-md text-center">
+        <div className="w-screen h-screen bg-gradient-to-b from-blue-400 to-white flex flex-col p-10">
+            <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md">
                 <h1 className="mb-4 text-4xl font-bold">Weather App</h1>
 
                 <div className="flex justify-center">
@@ -86,20 +88,33 @@ export default function App() {
 
                 {loading && <p className="mt-4">Loading...</p>}
                 {error && <p className="mt-4 text-red-600">{error}</p>}
-
+            </div>
+            <div className="bg-white/20 shadow-lg p-4 mt-4 rounded-md">
+                <div className="mb-4">
+                    <h1 className="text-xl font-bold">Current Weather</h1>
+                </div>
                 {weather?.main && (
-                    <div className="mt-6">
-                        <h2 className="text-xl font-semibold">{weather.name}</h2>
-                        <p>Temperature: {weather.main.temp}°C</p>
-                        <p>Condition: {weather.weather[0].description}</p>
-                        <p>Humidity: {weather.main.humidity}%</p>
-                        <p>Latitude: {weather.coord.lat}</p>
-                        <p>Longitude: {weather.coord.lon}</p>
+                    <div className="flex gap-4">
+                        <div className="p-4 bg-white/50 rounded-md flex-1">
+                            <h2 className="font-semibold text-2xl">{weather.name}</h2>
+                            <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}
+                                alt="weather icon"
+                                className="w-40 h-40 border-1"
+                                />
+                            <p className="pl-6 font-semibold text-sky-800 text-xl">{weather.weather[0].description}</p>
+                        </div>
+                        <div className="p-4 bg-white/50 rounded-md flex-1">
+                            <p>Temperature: {weather.main.temp}°C</p>
+                            <p>Humidity: {weather.main.humidity}%</p>
+                            <p>Latitude: {weather.coord.lat}</p>
+                            <p>Longitude: {weather.coord.lon}</p>
+                        </div>
                     </div>
                 )}
             </div>
-            <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md w-full max-w-md text-center">
-                {forecast.map((day, index) => (
+            <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md text-center mt-8">
+                <div className="flex flex-row gap-x-4 flex-wrap justify-center">
+                    {forecast.map((day, index) => (
                     <div key={index}  className="bg-blue-300 p-4 rounded-xl text-center shadow-md">
                         <p className="font-semibold">
                             {new Date(day.dt_txt).toLocaleDateString(undefined, {
@@ -112,6 +127,7 @@ export default function App() {
                         <p className="text-sm text-grey-600">{day.weather[0].description}</p>
                     </div>
                 ))}
+                </div>
             </div>
         </div>
     );
