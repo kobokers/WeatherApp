@@ -66,7 +66,7 @@ export default function App() {
 
     return (
         <div className="w-screen h-screen bg-gradient-to-b from-blue-400 to-white flex flex-col p-10">
-            <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md">
+            <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md w-full max-w-full sm:max-w-[90%] md:max-w-[70%] lg:max-w-[50%] mx-auto">
                 <h1 className="mb-4 text-4xl font-bold">Weather App</h1>
 
                 <div className="flex justify-center">
@@ -89,30 +89,44 @@ export default function App() {
                 {loading && <p className="mt-4">Loading...</p>}
                 {error && <p className="mt-4 text-red-600">{error}</p>}
             </div>
-            <div className="bg-white/20 shadow-lg p-4 mt-4 rounded-md">
+            <div className="bg-white/20 shadow-lg p-4 mt-4 rounded-md w-full max-w-full sm:max-w-[90%] md:max-w-[70%] lg:max-w-[50%] mx-auto">
                 <div className="mb-4">
                     <h1 className="text-xl font-bold">Current Weather</h1>
                 </div>
                 {weather?.main && (
-                    <div className="flex gap-4">
-                        <div className="p-4 bg-white/50 rounded-md flex-1">
-                            <h2 className="font-semibold text-2xl">{weather.name}</h2>
-                            <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}
-                                alt="weather icon"
-                                className="w-40 h-40 border-1"
-                                />
-                            <p className="pl-6 font-semibold text-sky-800 text-xl">{weather.weather[0].description}</p>
-                        </div>
-                        <div className="p-4 bg-white/50 rounded-md flex-1">
-                            <p>Temperature: {weather.main.temp}°C</p>
-                            <p>Humidity: {weather.main.humidity}%</p>
-                            <p>Latitude: {weather.coord.lat}</p>
-                            <p>Longitude: {weather.coord.lon}</p>
-                        </div>
+                <div className="flex flex-col sm:flex-row item-center gap-4">
+
+                    <div className="p-4 bg-white/50 rounded-md flex-1">
+                    <h2 className="font-semibold text-2xl mb-2">{weather.name}</h2>
+
+                    <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <img
+                        src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}
+                        alt={weather.weather[0].description}
+                        className="w-32 h-32"
+                    />
+                    <p className="text-4xl font-bold text-center">
+                        {Math.round(weather.main.temp)}°C
+                    </p>
                     </div>
+
+                    <p className="text-sky-800 text-xl font-semibold text-center">
+                        {weather.weather[0].description}
+                    </p>
+                    </div>
+
+                    <div className="p-4 bg-white/50 rounded-md flex-1">
+                    <br></br>
+                    <p>Humidity: {weather.main.humidity}%</p>
+                    <br></br>
+                    <p>Latitude: {weather.coord.lat}</p>
+                    <br></br>
+                    <p>Longitude: {weather.coord.lon}</p>
+                    </div>
+                </div>
                 )}
             </div>
-            <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md text-center mt-8">
+            <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md text-center mt-8 w-full max-w-full sm:max-w-[90%] md:max-w-[70%] lg:max-w-[50%] mx-auto">
                 <div className="flex flex-row gap-x-4 flex-wrap justify-center">
                     {forecast.map((day, index) => (
                     <div key={index}  className="bg-blue-300 p-4 rounded-xl text-center shadow-md">
