@@ -24,51 +24,46 @@ export default function App() {
         setCity(e.target.value);
     };
 
-    function getWeatherCondition(condition){
-        switch (condition) {
-            case "Clear":
-                return sunny;
-            case "Rain":
-                return rain;
-            case "Clouds":
-                return cloudy;
-            case "Thunderstorm":
-                return thunder;
-            case "Drizzle":
-                return partlyrain;
-        }
+    function getWeatherCondition(condition) {
+    const lower = condition.toLowerCase();
+    if (lower.includes("thunder")) return thunder;
+    if (lower.includes("rain")) return rain;
+    if (lower.includes("cloud")) return cloudy;
+    if (lower.includes("clear") || lower.includes("sunny")) return sunny;
+    return partlyrain;
     }
 
     const fetchWeather = async () => {
-        const trimmedCity = city.trim();
-        if (!trimmedCity) {
-            setError("Please enter a city");
-            return;
+    const trimmedCity = city.trim();
+    if (!trimmedCity) {
+        setError("Please enter a city");
+        return;
+    }
+
+    try {
+        setError("");
+        setWeather(null);
+        setForecast([]);
+        setLoading(true);
+
+        const res = await fetch(
+        `https://api.weatherapi.com/v1/forecast.json?key=50520c6face84d1bbbe123423252406&q=${trimmedCity}&days=7&aqi=no&alerts=no`
+        );
+        const data = await res.json();
+
+        if (res.ok || data.location) {
+        setWeather(data); // contains current + location
+        setForecast(data.forecast.forecastday); // daily array
+        } else {
+        setError(data.error?.message || "City not found.");
         }
-
-        try{
-            setError("");
-            setWeather(null);
-            setLoading(true);
-
-            const res = await fetch(
-                `https://api.openweathermap.org/data/2.5/weather?q=${trimmedCity}&units=metric&appid=ae029cb811481ddb940e2f9d2d1255c1`
-            )
-
-            const data = await res.json();
-
-            if (res.ok){
-                setWeather(data);
-                fetchForecast(trimmedCity)
-            } else {
-                setError(data.message);
-            }
-        } catch (err){
-            setError("Something went wrong.");
-        } finally {
-            setLoading(false);
-        }
+    } catch (err) {
+        setError("Something went wrong.");
+    } finally {
+        setLoading(false);
+    }
     };
+
 
     const fetchForecast = async (city) =>{
         try{
@@ -121,43 +116,44 @@ export default function App() {
                 <div className="mb-4">
                     <h1 className="text-3xl font-semibold">Current Weather</h1>
                 </div>
-                {weather?.main && (
+                {weather?.current && (
                 <div className="flex flex-col sm:flex-row item-center gap-4">
 
                     <div className="p-4 bg-white/50 rounded-md flex-1">
-                    <h2 className="font-semibold text-2xl mb-2">{weather.name}</h2>
+                    <h2 className="font-semibold text-2xl mb-2">{weather.location.name}</h2>
 
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                     <Lottie
-                    animationData={getWeatherCondition(weather.weather[0].main, weather.wind.speed)}
+                    animationData={getWeatherCondition(weather.current.condition.text)}
                     className="w-32 h-32"
                     />
+
                     <p className="text-4xl font-bold text-center">
-                        {Math.round(weather.main.temp)}°C
+                        {Math.round(weather.current.temp_c)}°C
                     </p>
                     </div>
 
                     <p className="text-sky-800 text-xl font-semibold text-center">
-                        {weather.weather[0].description}
+                        {weather.current.condition.text}
                     </p>
                     </div>
 
                     <div className="p-5 bg-white/50 rounded-md flex-1">
                         <div className="flex text-xl">
                             <Lottie  animationData={feels} className="w-10 h-10 pr-1"/>
-                            <p className="pt-1.5">Feels Like {weather.main.feels_like} °C</p>
+                            <p className="pt-1.5">Feels Like {weather.current.feelslike_c} °C</p>
                         </div>
                         <div className="flex mt-4 text-xl">
                             <Lottie animationData={humidity} className="w-10 h-10 pr-1"/>
-                            <p className="pt-1.5">Humidity: {weather.main.humidity}%</p>
+                            <p className="pt-1.5">Humidity: {weather.current.humidity}%</p>
                         </div>
                         <div className="flex mt-4 text-xl">
                             <Lottie animationData={pressure} className="w-10 h-10 pr-1"/> 
-                            <p className="pt-1.5">Pressure: {weather.main.pressure} hPa</p>
+                            <p className="pt-1.5">Pressure: {weather.current.pressure_mb} hPa</p>
                         </div>
                         <div className="flex mt-4 text-xl">
                             <Lottie animationData={windspeed} className="w-10 h-10 pr-1"/>
-                            <p className="pt-1.5">Windspeed: {weather.wind.speed} kph</p>
+                            <p className="pt-1.5">Windspeed: {weather.current.wind_kph} kph</p>
                         </div>
                     </div>
                 </div>
@@ -166,7 +162,7 @@ export default function App() {
             {weather &&(
                 <div className="shadow-md w-full md:max-w-[70%] lg:max-w-[50%] mx-auto mt-6 h-[300px]">
                 <MapContainer
-                    center={[weather.coord.lat, weather.coord.lon]}
+                    center={[weather.location.lat, weather.location.lon]}
                     zoom={10}
                     scrollWheelZoom={false}
                     className="h-[300px] w-full z-10">
@@ -174,7 +170,7 @@ export default function App() {
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    <Marker position={[weather.coord.lat, weather.coord.lon]}></Marker>
+                    <Marker position={[weather.location.lat, weather.location.lon]}></Marker>
                 </MapContainer>
                 </div>
             )}
@@ -182,18 +178,18 @@ export default function App() {
             <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md text-center mt-4 w-full max-w-full sm:max-w-[90%] md:max-w-[70%] lg:max-w-[50%] mx-auto">
                 <div className="flex flex-row gap-x-4 flex-wrap justify-center">
                     {forecast.map((day, index) => (
-                    <div key={index}  className="bg-blue-300 p-4 rounded-xl text-center shadow-md">
+                    <div key={index} className="bg-blue-300 p-4 rounded-xl text-center shadow-md">
                         <p className="font-semibold">
-                            {new Date(day.dt_txt).toLocaleDateString(undefined, {
-                                weekday: "short",
-                                month: "short",
-                                day: "numeric",
-                            })}
+                        {new Date(day.date).toLocaleDateString(undefined, {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric",
+                        })}
                         </p>
-                        <p>{Math.round(day.main.temp)} Celcius</p>
-                        <p className="text-sm text-grey-600">{day.weather[0].description}</p>
+                        <p>{Math.round(day.day.avgtemp_c)}°C</p>
+                        <p className="text-sm text-grey-600">{day.day.condition.text}</p>
                     </div>
-                ))}
+                    ))}
                 </div>
             </div>
         </div>
