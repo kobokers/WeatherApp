@@ -40,3 +40,5 @@ Day 13: Dark Mode
 
 Day 14: Polish & Deploy
 🧽 Clean up code, remove unused code, and deploy it (e.g. on Vercel or Netlify)
+
+add suggestion location, fallback output
