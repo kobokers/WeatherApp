@@ -1,5 +1,18 @@
 import React, { useState } from "react";
+import Lottie from "lottie-react";
 
+import sunny from "./Asset/Sunny.json";
+import rain  from "./Asset/Raining.json"
+import cloudy from "./Asset/Cloudy.json"
+import thunder from "./Asset/ThunderStorm.json";
+import partlyrain from "./Asset/PartlyRaining.json";
+import humidity from "./Asset/Humidity.json";
+import windspeed from "./Asset/windspeed.json";
+import pressure from "./Asset/Pressure.json";
+import feels from "./Asset/Temp.json";
+import { Map } from "leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+ 
 export default function App() {
     const [city, setCity] =  useState("");
     const [weather, setWeather] = useState(null);
@@ -10,6 +23,21 @@ export default function App() {
     const handleInputChange = (e) => {
         setCity(e.target.value);
     };
+
+    function getWeatherCondition(condition){
+        switch (condition) {
+            case "Clear":
+                return sunny;
+            case "Rain":
+                return rain;
+            case "Clouds":
+                return cloudy;
+            case "Thunderstorm":
+                return thunder;
+            case "Drizzle":
+                return partlyrain;
+        }
+    }
 
     const fetchWeather = async () => {
         const trimmedCity = city.trim();
@@ -91,7 +119,7 @@ export default function App() {
             </div>
             <div className="bg-white/20 shadow-lg p-4 mt-4 rounded-md w-full max-w-full sm:max-w-[90%] md:max-w-[70%] lg:max-w-[50%] mx-auto">
                 <div className="mb-4">
-                    <h1 className="text-xl font-bold">Current Weather</h1>
+                    <h1 className="text-3xl font-semibold">Current Weather</h1>
                 </div>
                 {weather?.main && (
                 <div className="flex flex-col sm:flex-row item-center gap-4">
@@ -100,10 +128,9 @@ export default function App() {
                     <h2 className="font-semibold text-2xl mb-2">{weather.name}</h2>
 
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                    <img
-                        src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}
-                        alt={weather.weather[0].description}
-                        className="w-32 h-32"
+                    <Lottie
+                    animationData={getWeatherCondition(weather.weather[0].main, weather.wind.speed)}
+                    className="w-32 h-32"
                     />
                     <p className="text-4xl font-bold text-center">
                         {Math.round(weather.main.temp)}°C
@@ -115,18 +142,44 @@ export default function App() {
                     </p>
                     </div>
 
-                    <div className="p-4 bg-white/50 rounded-md flex-1">
-                    <br></br>
-                    <p>Humidity: {weather.main.humidity}%</p>
-                    <br></br>
-                    <p>Latitude: {weather.coord.lat}</p>
-                    <br></br>
-                    <p>Longitude: {weather.coord.lon}</p>
+                    <div className="p-5 bg-white/50 rounded-md flex-1">
+                        <div className="flex text-xl">
+                            <Lottie  animationData={feels} className="w-10 h-10 pr-1"/>
+                            <p className="pt-1.5">Feels Like {weather.main.feels_like} °C</p>
+                        </div>
+                        <div className="flex mt-4 text-xl">
+                            <Lottie animationData={humidity} className="w-10 h-10 pr-1"/>
+                            <p className="pt-1.5">Humidity: {weather.main.humidity}%</p>
+                        </div>
+                        <div className="flex mt-4 text-xl">
+                            <Lottie animationData={pressure} className="w-10 h-10 pr-1"/> 
+                            <p className="pt-1.5">Pressure: {weather.main.pressure} hPa</p>
+                        </div>
+                        <div className="flex mt-4 text-xl">
+                            <Lottie animationData={windspeed} className="w-10 h-10 pr-1"/>
+                            <p className="pt-1.5">Windspeed: {weather.wind.speed} kph</p>
+                        </div>
                     </div>
                 </div>
                 )}
             </div>
-            <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md text-center mt-8 w-full max-w-full sm:max-w-[90%] md:max-w-[70%] lg:max-w-[50%] mx-auto">
+            {weather &&(
+                <div className="shadow-md w-full md:max-w-[70%] lg:max-w-[50%] mx-auto mt-6 h-[300px]">
+                <MapContainer
+                    center={[weather.coord.lat, weather.coord.lon]}
+                    zoom={10}
+                    scrollWheelZoom={false}
+                    className="h-[300px] w-full z-10">
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <Marker position={[weather.coord.lat, weather.coord.lon]}></Marker>
+                </MapContainer>
+                </div>
+            )}
+
+            <div className="bg-white/20 shadow-lg p-8 rounded-lg shadow-md text-center mt-4 w-full max-w-full sm:max-w-[90%] md:max-w-[70%] lg:max-w-[50%] mx-auto">
                 <div className="flex flex-row gap-x-4 flex-wrap justify-center">
                     {forecast.map((day, index) => (
                     <div key={index}  className="bg-blue-300 p-4 rounded-xl text-center shadow-md">
