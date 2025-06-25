@@ -17,8 +17,8 @@ A simple weather forecast web app built using **React**, **Tailwind CSS**, **Wea
 
 ## 🛠️ Built With
 
-- [React](https://reactjs.org/)
-- [Vite](https://vitejs.dev/)
+- [React](https://react.dev/)
+- [Vite](https://vite.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [WeatherAPI](https://www.weatherapi.com/)
 - [React Leaflet](https://react-leaflet.js.org/)
