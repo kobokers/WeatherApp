@@ -35,7 +35,7 @@ export default function App() {
 
         try {
             const res = await fetch(
-                `https://api.weatherapi.com/v1/search.json?key=50520c6face84d1bbbe123423252406&q=${query}`
+                `https://api.weatherapi.com/v1/search.json?key=${import.meta.env.VITE_WEATHER_API_KEY}&q=${query}`
 
             );
             const data = await res.json();
@@ -70,7 +70,7 @@ export default function App() {
 
         try {
             const res = await fetch(
-                `https://api.weatherapi.com/v1/forecast.json?key=50520c6face84d1bbbe123423252406&q=${trimmedCity}&days=3&aqi=yes&alerts=no`
+                `https://api.weatherapi.com/v1/forecast.json?key=${import.meta.env.VITE_WEATHER_API_KEY}&q=${trimmedCity}&days=3&aqi=yes&alerts=no`
             );
             const data = await res.json();
 
