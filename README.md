@@ -32,5 +32,3 @@ A simple weather forecast web app built using **React**, **Tailwind CSS**, **Wea
 > ```
 > VITE_WEATHER_API_KEY=your_api_key_here
 > ```
-
-This project is open-source and available under the [MIT License](LICENSE).
