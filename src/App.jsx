@@ -11,6 +11,7 @@ import humidity from './Asset/Humidity.json';
 import windspeed from './Asset/windspeed.json';
 import pressure from './Asset/Pressure.json';
 import feels from './Asset/Temp.json';
+import github from "./Asset/icons8-github.json";
 
 export default function App() {
     const [city, setCity] = useState('');
@@ -18,8 +19,32 @@ export default function App() {
     const [forecast, setForecast] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [suggestion, setSuggest] = useState([]);
 
-    const handleInputChange = (e) => setCity(e.target.value);
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        setCity(value);
+        fetchSuggestion(value);
+    };
+
+    const fetchSuggestion =  async (query) => {
+        if (!query){
+            setSuggest([]);
+            return;
+        }
+
+        try {
+            const res = await fetch(
+                `https://api.weatherapi.com/v1/search.json?key=50520c6face84d1bbbe123423252406&q=${query}`
+
+            );
+            const data = await res.json();
+            setSuggest(data);
+        } catch (err){
+            setError("Failed to fetch suggestion...");
+            setSuggest([]);
+        }
+    };
 
     const getWeatherIcon = (condition) => {
         if (condition.includes('Clear')) return sunny;
@@ -64,10 +89,21 @@ export default function App() {
 
     return (
         <div className="w-screen min-h-screen bg-gradient-to-b from-blue-400 to-white flex flex-col p-10">
+                <div className='rounded-lg bg-white/20 w-10 h-10 flex ml-auto hover:bg-blue-600'>
+
+                    <button
+                    onClick={() => window.open('https://github.com/kobokers/WeatherApp', '_blank', 'noopener noreferrer')}
+                    aria-label="Visit my GitHub"
+                    >
+                    <Lottie animationData={github} className="w-10 h-10" />
+                    </button>
+
+                </div>
             {/* Search Input */}
             <div className="bg-white/20 shadow-lg p-8 rounded-lg w-full max-w-[90%] md:max-w-[70%] lg:max-w-[50%] mx-auto">
-                <h1 className="mb-4 text-4xl font-bold">Weather App</h1>
-                <div className="flex justify-center">
+                <h1 className="mb-4 text-4xl font-bold">Simple Weather App</h1>
+                <div className="flex flex-col justify-center">
+                    <div className='flex w-full'>
                     <input
                         type="text"
                         value={city}
@@ -81,6 +117,24 @@ export default function App() {
                     >
                         Search
                     </button>
+                    </div>
+
+                    {suggestion.length > 0 && (
+                    <ul className="bg-white/20 rounded shadow-md mt-2 max-h-48 flex-col">
+                        {suggestion.map((suggestion, index) =>(
+                            <li
+                            key={index}
+                            className="p-2 hover:bg-grey-200 cursor-pointer text-left"
+                            onClick={() => {
+                                setCity(suggestion.name);
+                                setSuggest([]);
+                            }}
+                            >
+                                {suggestion.name}, {suggestion.country}
+                            </li>
+                        ))}
+                    </ul>
+                    )}
                 </div>
                 {loading && <p className="mt-4">Loading...</p>}
                 {error && <p className="mt-4 text-red-600">{error}</p>}
@@ -135,14 +189,16 @@ export default function App() {
 
             {/*add checking if data not null*/}
             {weather?.current && (
-                <div className="bg-white/20 shadow-lg p-4 mt-4 rounded-md w-full max-w-[90%] md:max-w-[70%] lg:max-w-[50%] mx-auto">
-                    <h3 className="text-xl font-bold mb-2">Air Quality</h3>
-                    <p>PM2.5: {weather.current.air_quality.pm2_5.toFixed(2)}</p>
-                    <p>PM10: {weather.current.air_quality.pm10.toFixed(2)}</p>
-                    <p>CO: {weather.current.air_quality.co.toFixed(2)}</p>
-                    <p>NO₂: {weather.current.air_quality.no2.toFixed(2)}</p>
-                    <p>O₃: {weather.current.air_quality.o3.toFixed(2)}</p>
-                    <p>SO₂: {weather.current.air_quality.so2.toFixed(2)}</p>
+                <div className='bg-white/20 shadow-lg p-4 mt-4 rounded-md w-full max-w-[90%] md:max-w-[70%] lg:max-w-[50%] mx-auto'>
+                    <div className='flex flex-col sm:flex-row gap-4'>
+                        <div className="p-4 bg-white/50 flex-1 rounded-lg">
+                            <p className='text-xl font-semibold'>Air Quality</p><br></br>
+                            <p>Carbon Monoxide: {weather.current.air_quality.co} μg/m3</p><br></br>
+                            <p>Ozone : {weather.current.air_quality.o3} μg/m3</p><br></br>
+                            <p>Nitrogen Dioxide: {weather.current.air_quality.no2} μg/m3</p><br></br>
+                            <p>Sulphur Dioxide: {weather.current.air_quality.so2} μg/m3</p><br></br>
+                        </div>
+                    </div>
                 </div>
             )}
 
