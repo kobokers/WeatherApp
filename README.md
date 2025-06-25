@@ -13,7 +13,6 @@ A simple weather forecast web app built using **React**, **Tailwind CSS**, **Wea
 - 🌡️ 3-day forecast
 - 🌍 Interactive map with city marker
 - 💨 Air quality data (CO, NO₂, SO₂, O₃)
-- 🌗 Dark mode toggle
 
 ## 🛠️ Built With
 
